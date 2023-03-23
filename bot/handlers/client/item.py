@@ -8,19 +8,11 @@ from aiogram_dialog import Window, Dialog, DialogManager
 from aiogram_dialog.widgets.kbd import Cancel, Button
 from aiogram_dialog.widgets.text import Const, Format
 
-from dialog.dialog_state import ItemSG, ItemShopsSG, CreateItemOrderSG
+from dialog.dialog_state import ItemSG, CreateItemOrderSG
 
 from db.services.items import get_item
 
 from sqlalchemy.orm import Session
-
-
-async def item_shops(call: types.CallbackQuery, widget: Any, manager: DialogManager):
-    """Item shops"""
-
-    await manager.start(
-        ItemShopsSG.item_shops, {"item_id": manager.start_data.get("item_id")}
-    )
 
 
 async def item_order_create(
@@ -66,7 +58,6 @@ item_window = Window(
     Const("Описание:"),
     Format("{item.description}\n"),
     Format("Цена: {item.price} руб."),
-    Button(Const("Где есть товар?"), id="item_shops", on_click=item_shops),
     Button(Const("Купить"), id="item_order_create", on_click=item_order_create),
     Button(Const("Фото товара"), id="item_photos", on_click=item_photos),
     Cancel(Const("Назад")),

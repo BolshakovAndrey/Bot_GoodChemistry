@@ -10,14 +10,9 @@ from dialog.dialog_state import (
     AdminSG,
     DeleteCategorySG,
     DeleteItemSG,
-    DeleteShopSG,
     CreateCategorySG,
-    CreateShopSG,
     CreateItemSG,
     OrdersSG,
-    DeleteServiceCategorySG,
-    CreateServiceCategorySG,
-    EditItemShopQuantity,
 )
 
 from sqlalchemy.orm import Session
@@ -39,47 +34,21 @@ admin_window = Window(
         ),
         Row(
             Start(
-                Const("Удалить магазин"),
-                id="deleteshop",
-                state=DeleteShopSG.list_of_shops_to_delete,
-            ),
-            Start(
-                Const("Удалить категорию услуг"),
-                id="deleteservicecategory",
-                state=DeleteServiceCategorySG.list_of_service_categories_to_delete,
-            ),
-        ),
-        Row(
-            Start(
                 Const("Добавить категорию"),
                 id="addcategory",
                 state=CreateCategorySG.start_create_category,
             ),
             Start(
-                Const("Добавить магазин"),
-                id="addshop",
-                state=CreateShopSG.start_create_shop,
-            ),
-        ),
-        Row(
-            Start(
                 Const("Добавить товар"),
                 id="additem",
                 state=CreateItemSG.start_create_item,
             ),
-            Start(
-                Const("Добавить категорию услуг"),
-                id="addservicecategory",
-                state=CreateServiceCategorySG.start_create_service_category,
-            ),
         ),
         Row(
-            Start(Const("Заказы"), id="orders", state=OrdersSG.list_of_orders),
             Start(
-                Const("Изменить остатки товара"),
-                id="edititemshopquantity",
-                state=EditItemShopQuantity.list_of_items_categories,
-            ),
+                Const("Заказы"),
+                id="orders",
+                state=OrdersSG.list_of_orders),
         ),
     ),
     state=AdminSG.admin,

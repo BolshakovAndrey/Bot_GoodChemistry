@@ -49,9 +49,9 @@ async def get_order_data(
 
     order = await get_order(db_session, order_id)
     order_customer = await get_user_username(order.user_id, bot)
-    order_type = "Товар" if order.item_id else "Услуга"
-    order_price = f"{order.item.price} руб." if order.item_id else "Договорная"
-    order_service_description = order.service.description if order.service_id else None
+    order_type = "Товар"
+    order_price = f"{order.item.price} руб."
+    # order_service_description = order.service.description if order.service_id else None
 
     return {
         "order": order,
@@ -59,7 +59,7 @@ async def get_order_data(
         "order_type": order_type,
         "order_title": order.item.title if order.item_id else order.service.title,
         "order_price": order_price,
-        "order_service_description": order_service_description,
+        # "order_service_description": order_service_description,
     }
 
 
@@ -69,10 +69,10 @@ order_details_window = Window(
     Format("Заказчик: {order_customer}"),
     Format("Тип: {order_type}"),
     Format('Название: "{order_title}"'),
-    Format(
-        "Описание услуги:\n{order_service_description}",
-        when="order_service_description",
-    ),
+    # Format(
+    #     "Описание услуги:\n{order_service_description}",
+    #     when="order_service_description",
+    # ),
     Format("Кол-во товаров в заказе: {order.quantity}"),
     Format("На сумму: {order_price}"),
     Button(Const("Заказ оплачен ✅"), id="order_paid", on_click=pay_order),

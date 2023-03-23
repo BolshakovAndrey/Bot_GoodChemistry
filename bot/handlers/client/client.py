@@ -9,7 +9,7 @@ from aiogram_dialog import Window, Dialog, DialogManager, StartMode
 from aiogram_dialog.widgets.kbd import Start, Row, Button
 from aiogram_dialog.widgets.text import Const, Format
 
-from dialog.dialog_state import ClientSG, CategoriesSG, CreateServiceOrderSG
+from dialog.dialog_state import ClientSG, CategoriesSG
 
 from .user_items import user_items
 
@@ -21,11 +21,6 @@ start_window = Window(
     ),
     Row(
         Start(Const("Товары"), id="items", state=CategoriesSG.list_of_categories),
-        Start(
-            Const("Заказать услугу"),
-            id="service_order",
-            state=CreateServiceOrderSG.set_service_category,
-        ),
     ),
     Button(Const("Купленные товары"), id="user_items", on_click=user_items),
     state=ClientSG.start,

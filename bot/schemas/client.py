@@ -18,7 +18,6 @@ class OrderModel(BaseModel):
 
     item_id: int = None
     service_id: int = None
-    shop_id: int = None
     user_id: int
     summ: int = None
     quantity: int = 1

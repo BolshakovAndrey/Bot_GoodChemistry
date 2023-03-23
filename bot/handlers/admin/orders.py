@@ -34,11 +34,11 @@ async def get_orders_data(db_session: Session, bot: Bot, config: Config, **kwarg
 
     orders = [
         (
-            "Товар" if order.item_id else "Услуга",
-            order.item.title if order.item_id else order.service.title,
+            "Товар",
+            order.item.title,
             await get_user_username(order.user_id, bot),
             order.id,
-            order.summ or "(договорная)",
+            order.summ,
             order.quantity,
         )
         for order in await get_unpaid_orders(db_session)

@@ -26,57 +26,17 @@ from db.services.items import create_item as create_item_service
 from sqlalchemy.exc import DBAPIError
 
 from dialog.dialog_state import CreateItemSG
-from dialog.data_getters import get_categories_data, get_shops_data
-from dialog.widgets import MultiCounterSelect
-
-
-async def set_item_shops(message: types.Message, widget: Any, manager: DialogManager):
-    """Set item shops and create them"""
-
-    selected_shops: dict = manager.find("itemshopssel").get_checked()
-    manager.dialog_data["shops"] = list(
-        map(lambda shop: tuple(map(int, shop)), selected_shops.items())
-    )
-
-    try:
-        item = ItemModel(**manager.dialog_data)
-
-        await create_item_service(
-            manager.middleware_data.get("db_session"),
-            item,
-        )
-
-        await message.answer("Товар успешно добавлен!")
-    except (ValidationError, DBAPIError) as err:
-        await message.answer("Произошла ошибка при добавлении товара!")
-
-    await manager.done()
-
-
-set_item_shops_window = Window(
-    Const("Выберите, в каких магазинах и в каком кол-ве есть товар"),
-    MultiCounterSelect(
-        Format("✓ {item.title} ({click_count} штук/и) {item.address}"),
-        Format("{item.title} ({click_count} штук/и) {item.address}"),
-        id="itemshopssel",
-        item_id_getter=lambda shop: shop.id,
-        items="shops",
-        min_selected=1,
-    ),
-    Button(Const("Готово"), id="itemshopsselsucces", on_click=set_item_shops),
-    state=CreateItemSG.set_item_shops,
-    getter=get_shops_data,
-)
+from dialog.data_getters import get_categories_data
 
 
 async def set_item_category_id(
-    message: types.Message, widget: Any, manager: DialogManager, category_id: int
+        message: types.Message, widget: Any, manager: DialogManager, category_id: int
 ):
     """Set item category_id"""
 
     manager.dialog_data["category_id"] = category_id
 
-    await manager.switch_to(CreateItemSG.set_item_shops)
+    await manager.switch_to(CreateItemSG.set_item_price)
 
 
 set_item_category_id_window = Window(
@@ -99,7 +59,7 @@ set_item_category_id_window = Window(
 
 
 async def set_item_price(
-    message: types.Message, widget: Any, manager: DialogManager, input: str
+        message: types.Message, widget: Any, manager: DialogManager, input: str
 ):
     """Set item price"""
 
@@ -121,10 +81,8 @@ async def set_item_photos(message: types.Message, widget: Any, manager: DialogMa
     """Set item photos"""
 
     photos: list = manager.dialog_data.get("photos")
-
     if not photos:
         manager.dialog_data["photos"] = []
-
     manager.dialog_data.get("photos").extend([message.photo[-1].file_id])
 
 
@@ -132,7 +90,6 @@ async def item_photos_getter(dialog_manager: DialogManager, **kwargs) -> dict:
     """Data getter for set_item_photos window"""
 
     selected_photos = dialog_manager.dialog_data.get("photos", [])
-
     return {"photos_count": len(selected_photos)}
 
 
@@ -147,12 +104,11 @@ set_item_photos_window = Window(
 
 
 async def set_item_description(
-    message: types.Message, widget: Any, manager: DialogManager, input: str
+        message: types.Message, widget: Any, manager: DialogManager, input: str
 ):
     """Set item description"""
 
     manager.dialog_data["description"] = input
-
     await manager.switch_to(CreateItemSG.set_item_photos)
 
 
@@ -165,7 +121,7 @@ set_item_description_window = Window(
 
 
 async def set_item_title(
-    message: types.Message, widget: Any, manager: DialogManager, input: str
+        message: types.Message, widget: Any, manager: DialogManager, input: str
 ):
     """Set item title"""
 
@@ -187,5 +143,4 @@ create_item_dialog = Dialog(
     set_item_photos_window,
     set_item_price_window,
     set_item_category_id_window,
-    set_item_shops_window,
 )
