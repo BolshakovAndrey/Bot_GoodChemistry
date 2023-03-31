@@ -29,6 +29,7 @@ from dialog.dialog_state import CreateItemSG
 from dialog.data_getters import get_categories_data
 
 
+
 async def create_item(message: types.Message, widget: Any, manager: DialogManager):
     """Create the item"""
     item = ItemModel(**manager.dialog_data)
@@ -39,6 +40,9 @@ async def create_item(message: types.Message, widget: Any, manager: DialogManage
     )
 
     await message.answer("Товар успешно добавлен!")
+    # Stop the dialog
+    await manager.done()
+
 
 async def set_item_shops(message: types.Message, widget: Any, manager: DialogManager):
     """Set item and create it"""
@@ -56,16 +60,9 @@ async def set_item_shops(message: types.Message, widget: Any, manager: DialogMan
 
 
 set_item_shops_window = Window(
-    # Create a string representation of the item to display in the window
-    # TODO add info about the item
-    # Format(
-    #     "Название: {item.title}\n"
-    #     "Описание: {item.description}\n"
-    #     "Цена: {item.price}\n"
-    #     "Категория: {item.category_id}\n"
-    # ),
     Const("Создание товара"),
-    Button(Const("Создать товар"), id="itemshopsselsucces", on_click=create_item),
+    Button(Const("Создать товар"), id="itemcreated", on_click=create_item),
+    Button(Const("Отмена"), id="itemcancel", on_click=Cancel()),
     state=CreateItemSG.set_item_shops,
 )
 
