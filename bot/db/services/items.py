@@ -20,7 +20,7 @@ async def create_item(session: Session, item_obj: ItemModel) -> None:
         description=item_obj.description,
         price=item_obj.price,
         stock=item_obj.stock,
-        category=category
+        category_id=item_obj.category_id
     )
     item_photo_objects = []
     for photo_id in item_obj.photos:

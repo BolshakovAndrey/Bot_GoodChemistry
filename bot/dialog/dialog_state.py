@@ -71,6 +71,7 @@ class CreateCategorySG(StatesGroup):
 
     start_create_category = State()
 
+
 class CreateItemSG(StatesGroup):
     """Create item StatesGroup"""
 
@@ -79,6 +80,7 @@ class CreateItemSG(StatesGroup):
     set_item_photos = State()
     set_item_price = State()
     set_item_category_id = State()
+    set_item_stock = State()
     set_item_shops = State()
 
 
@@ -92,4 +94,3 @@ class OrderSG(StatesGroup):
     """Order StatesGroup"""
 
     order_details = State()
-

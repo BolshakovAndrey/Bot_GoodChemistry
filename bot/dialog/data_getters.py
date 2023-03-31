@@ -39,3 +39,13 @@ async def get_category_items_data(
         "category_items": category_items,
         "count": await get_items_by_category_count(db_session, category_id),
     }
+
+    async def get_shops_data(db_session: Session, **kwargs):
+        """Shops data getter"""
+
+        shops = await get_shops(db_session)
+
+        return {
+            "shops": shops,
+            "count": await get_shops_count(db_session),
+        }

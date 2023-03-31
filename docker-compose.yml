@@ -1,27 +1,28 @@
 version: '3.8'
 
 services:
-    bot:
-        build: ./bot
-        restart: always
-        command: python bot.py
-        env_file:
-            - ./bot/.env
-        depends_on:
-            - db
-    db:
-        image: postgres:14.5-alpine
-        restart: always
-        environment:
-            POSTGRES_PASSWORD: ${DB_PASS}
-            POSTGRES_USER: ${DB_USER}
-            POSTGRES_DB: ${DB_NAME}
-            PGPASSWORD: ${DB_PASS}
-        env_file:
-            - ./bot/.env
-        volumes:
-            - db_data:/var/lib/postgresql/data/
-
+  bot:
+    build: ./bot
+    restart: always
+    command: python bot.py
+    env_file:
+      - ./bot/.env
+    depends_on:
+      - db
+  db:
+    image: postgres:14.5-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB: ${DB_NAME}
+      PGPASSWORD: ${DB_PASS}
+    env_file:
+      - ./bot/.env
+    volumes:
+      - db_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
 
 volumes:
-    db_data:
+  db_data:

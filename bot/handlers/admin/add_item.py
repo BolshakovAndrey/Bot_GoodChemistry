@@ -29,6 +29,67 @@ from dialog.dialog_state import CreateItemSG
 from dialog.data_getters import get_categories_data
 
 
+async def create_item(message: types.Message, widget: Any, manager: DialogManager):
+    """Create the item"""
+    item = ItemModel(**manager.dialog_data)
+
+    await create_item_service(
+        manager.middleware_data.get("db_session"),
+        item,
+    )
+
+    await message.answer("Товар успешно добавлен!")
+
+async def set_item_shops(message: types.Message, widget: Any, manager: DialogManager):
+    """Set item and create it"""
+
+    try:
+        item = ItemModel(**manager.dialog_data)
+
+        # Set the window as the current window for the manager
+        await manager.current_window(set_item_shops_window)
+
+    except (ValidationError, DBAPIError) as err:
+        await message.answer("Произошла ошибка при добавлении товара!")
+
+    await manager.done()
+
+
+set_item_shops_window = Window(
+    # Create a string representation of the item to display in the window
+    # TODO add info about the item
+    # Format(
+    #     "Название: {item.title}\n"
+    #     "Описание: {item.description}\n"
+    #     "Цена: {item.price}\n"
+    #     "Категория: {item.category_id}\n"
+    # ),
+    Const("Создание товара"),
+    Button(Const("Создать товар"), id="itemshopsselsucces", on_click=create_item),
+    state=CreateItemSG.set_item_shops,
+)
+
+
+# Set quantity of the item in the stock
+async def set_item_stock(
+        message: types.Message, widget: Any, manager: DialogManager, input: str
+):
+    """Set item quantity in the stock"""
+
+    manager.dialog_data["stock"] = input
+
+    await manager.switch_to(CreateItemSG.set_item_shops)
+
+
+set_item_stock_window = Window(
+    Const(
+        "Введите начальное количество товара на складе"
+    ),
+    TextInput("itemquantity", str, on_success=set_item_stock),
+    state=CreateItemSG.set_item_stock,
+)
+
+
 async def set_item_category_id(
         message: types.Message, widget: Any, manager: DialogManager, category_id: int
 ):
@@ -36,7 +97,7 @@ async def set_item_category_id(
 
     manager.dialog_data["category_id"] = category_id
 
-    await manager.switch_to(CreateItemSG.set_item_price)
+    await manager.switch_to(CreateItemSG.set_item_stock)
 
 
 set_item_category_id_window = Window(
@@ -143,4 +204,6 @@ create_item_dialog = Dialog(
     set_item_photos_window,
     set_item_price_window,
     set_item_category_id_window,
+    set_item_stock_window,
+    set_item_shops_window,
 )
