@@ -9,7 +9,6 @@ class OrderModel(BaseModel):
     """Order schema"""
 
     item_id: int = None
-    service_id: int = None
     user_id: int
     summ: int = None
     quantity: int = 1
@@ -20,7 +19,7 @@ class OrderModel(BaseModel):
 
         item_id = values.get("item_id")
         if not item_id:
-            raise ValueError("Вы должны указать либо id товара.")
+            raise ValueError("Вы должны указать id товара.")
 
         return values
 
@@ -30,7 +29,7 @@ class OrderModel(BaseModel):
 
         item_id = values.get("item_id")
 
-        if item_id:
+        if not item_id:
             raise ValueError("Если вы указали id товара.")
 
         return values

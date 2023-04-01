@@ -53,10 +53,13 @@ async def create_order(session: Session, order_obj: OrderModel) -> Order:
     user = await get_user(session, order_obj.user_id)
 
     order.user = user
+    order.user_id = user.id
+    order.item_id = order_obj.item_id
     order.summ = order_obj.summ
     order.quantity = order_obj.quantity
 
     if order_obj.item_id:
+        # TODO: check if user has enough items
         user_item = await get_user_item(session, order_obj.item_id, order.user_id)
 
         if user_item:

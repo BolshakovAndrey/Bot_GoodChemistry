@@ -32,6 +32,7 @@ async def get_order_data(
 
     order_id: int = dialog_manager.dialog_data.get("order_id")
     order_summ: float = dialog_manager.dialog_data.get("order_summ")
+    # TODO add admins variable to config
     admins = await get_admins(bot, config)
     return {"order_id": order_id, "order_summ": order_summ, "admins": "\n".join(admins)}
 
@@ -67,6 +68,7 @@ async def set_order_quantity(
         order = OrderModel(
             item_id=item_id, user_id=user_id, summ=order_summ, **manager.dialog_data
         )
+
         order = await create_order(
             manager.middleware_data.get("db_session"),
             order,
@@ -78,7 +80,7 @@ async def set_order_quantity(
         await manager.switch_to(CreateItemOrderSG.item_order_created)
 
     except (DBAPIError, ValidationError):
-        message.answer("Что-то пошло не так..")
+        await message.answer("Что-то пошло не так..")
         await manager.done()
 
 
